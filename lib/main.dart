@@ -7,6 +7,7 @@ import 'providers/chat_provider.dart';
 import 'providers/voice_provider.dart';
 import 'screens/login_screen.dart';
 import 'screens/chat_screen.dart';
+import 'theme/app_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,17 +31,9 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Kindred Chatbot',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
-        darkTheme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.deepPurple,
-            brightness: Brightness.dark,
-          ),
-          useMaterial3: true,
-        ),
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: ThemeMode.system,
         home: Consumer<AuthProvider>(
           builder: (context, authProvider, child) {
             if (authProvider.isLoading) {
