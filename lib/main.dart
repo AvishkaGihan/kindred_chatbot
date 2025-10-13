@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'providers/auth_provider.dart';
 import 'providers/chat_provider.dart';
 import 'providers/voice_provider.dart';
+import 'providers/theme_provider.dart';
 import 'screens/login_screen.dart';
 import 'screens/chat_screen.dart';
 import 'theme/app_theme.dart';
@@ -22,6 +23,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(
           create: (context) =>
@@ -29,19 +31,27 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(create: (_) => VoiceProvider()),
       ],
-      child: MaterialApp(
-        title: 'Kindred Chatbot',
-        theme: AppTheme.lightTheme,
-        darkTheme: AppTheme.darkTheme,
-        themeMode: ThemeMode.system,
-        home: Consumer<AuthProvider>(
-          builder: (context, authProvider, child) {
-            if (authProvider.isLoading) {
-              return Scaffold(body: Center(child: CircularProgressIndicator()));
-            }
-            return authProvider.user == null ? LoginScreen() : ChatScreen();
-          },
-        ),
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, child) {
+          return MaterialApp(
+            title: 'Kindred Chatbot',
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: themeProvider.themeMode,
+            home: Consumer<AuthProvider>(
+              builder: (context, authProvider, child) {
+                if (authProvider.isLoading) {
+                  return const Scaffold(
+                    body: Center(child: CircularProgressIndicator()),
+                  );
+                }
+                return authProvider.user == null
+                    ? const LoginScreen()
+                    : const ChatScreen();
+              },
+            ),
+          );
+        },
       ),
     );
   }

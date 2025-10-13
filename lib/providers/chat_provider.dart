@@ -10,11 +10,13 @@ class ChatProvider with ChangeNotifier {
   List<MessageModel> _messages = [];
   List<ChatSession> _chatSessions = [];
   bool _isProcessing = false;
+  bool _isInitialLoading = true;
   String? _currentSessionId;
 
   List<MessageModel> get messages => _messages;
   List<ChatSession> get chatSessions => _chatSessions;
   bool get isProcessing => _isProcessing;
+  bool get isInitialLoading => _isInitialLoading;
   String? get currentSessionId => _currentSessionId;
 
   // Stream for current session messages
@@ -34,6 +36,7 @@ class ChatProvider with ChangeNotifier {
     // Listen to messages stream
     messagesStream.listen((messages) {
       _messages = messages;
+      _isInitialLoading = false;
       notifyListeners();
     });
 
