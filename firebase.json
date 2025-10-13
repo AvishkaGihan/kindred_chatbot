@@ -1,0 +1,28 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "kindred-chatbot",
+          "appId": "1:343429360131:android:80add1c6a9101cd237bc36",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "kindred-chatbot",
+          "configurations": {
+            "android": "1:343429360131:android:80add1c6a9101cd237bc36",
+            "ios": "1:343429360131:ios:867071779e6af88d37bc36"
+          }
+        }
+      }
+    }
+  },
+  "firestore": {
+    "database": "(default)",
+    "location": "nam5",
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  }
+}

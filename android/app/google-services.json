@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "343429360131",
+    "project_id": "kindred-chatbot",
+    "storage_bucket": "kindred-chatbot.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:343429360131:android:80add1c6a9101cd237bc36",
+        "android_client_info": {
+          "package_name": "com.example.kindred_chatbot"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "343429360131-k2o48t7op0qarvkgtbav1mh5vak1pdio.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.kindred_chatbot",
+            "certificate_hash": "f4bfdcf2c7a9ceab18470047ea3e214cd5e9ef63"
+          }
+        },
+        {
+          "client_id": "343429360131-cohiickl2a0bvp8e0klqtj61qi1r9k4o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6ePUqhNP5yprmyV5WzWYpliwEnq-VhZs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "343429360131-cohiickl2a0bvp8e0klqtj61qi1r9k4o.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "343429360131-kd8ha7pef6m3hh2n5jopio3adjrv5b98.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.kindredChatbot"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

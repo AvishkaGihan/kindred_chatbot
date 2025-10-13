@@ -1,0 +1,160 @@
+###############################################
+# Kindred Chatbot .gitignore (Flutter, 2025)  #
+###############################################
+
+############################
+# OS / Editor / Tooling    #
+############################
+# OS
+*.DS_Store
+Thumbs.db
+
+# Editors/IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/tasks.json
+
+# Misc temp/cache
+*.swp
+*.swo
+*.log
+*.tmp
+*.pid
+.history
+.svn/
+.atom/
+.buildlog/
+.swiftpm/
+migrate_working_dir/
+
+############################
+# Dart / Flutter / Pub     #
+############################
+.dart_tool/
+.pub/
+.pub-cache/
+.flutter-plugins
+.flutter-plugins-dependencies
+.metadata
+pubspec.lock # if publishing a package keep; for apps it's fine to commit, but we ignore to avoid lock conflicts
+
+# Build & coverage
+build/
+coverage/
+**/doc/api/
+**/ios/Flutter/.last_build_id
+
+############################
+# Android                  #
+############################
+android/.gradle/
+android/.idea/
+android/local.properties
+android/**/captures/
+android/**/build/
+android/app/debug/
+android/app/profile/
+android/app/release/
+
+# Keystores (DO NOT COMMIT)
+android/key.properties
+android/**/key.jks
+android/**/key.keystore
+
+############################
+# iOS / macOS              #
+############################
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+ios/Flutter/Generated.xcconfig
+ios/Flutter/ephemeral/
+ios/Pods/
+ios/.symlinks/
+ios/build/
+ios/Runner.xcworkspace/
+ios/RunnerTests/
+
+macos/Flutter/ephemeral/
+macos/Pods/
+macos/.symlinks/
+macos/build/
+macos/Runner.xcworkspace/
+macos/RunnerTests/
+
+############################
+# Web                      #
+############################
+web/.dart_tool/
+web/.flutter-plugins*
+
+############################
+# Windows / Linux          #
+############################
+windows/**/x64/
+windows/**/x86/
+windows/**/arm64/
+windows/**/Debug/
+windows/**/Release/
+windows/**/build/
+
+linux/**/Debug/
+linux/**/Release/
+linux/**/build/
+
+############################
+# Firebase / Secrets       #
+############################
+# Keep client config files that are required at runtime (they are already present).
+# DO NOT ignore these for mobile clients unless you intend to inject them in CI:
+!android/app/google-services.json
+!ios/Runner/GoogleService-Info.plist
+!lib/firebase_options.dart
+
+# Emulator & local state
+.firebase/
+firebase-debug.log
+firestore-debug.log
+database-debug.log
+storage-debug.log
+emulator-ui-debug.log
+
+# Service accounts / private keys (never commit)
+serviceAccount*.json
+**/service-account.json
+**/firebase-adminsdk-*.json
+
+# App Check debug tokens (if used)
+.appcheck-debug
+
+############################
+# Crash/Mapping/Symbols    #
+############################
+app.*.symbols
+app.*.map.json
+
+############################
+# Native / Misc            #
+############################
+*.so
+*.dylib
+*.dll
+*.class
+*.jar
+*.aar
+*.a
+
+# Coverage, reports, and tooling outputs
+reports/
+build/**/tmp/
+build/**/intermediates/
+build/**/outputs/
+
+# IntelliJ caches
+.gradle/
+**/.DS_Store
