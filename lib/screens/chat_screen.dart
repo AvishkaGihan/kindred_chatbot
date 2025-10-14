@@ -174,11 +174,17 @@ class _ChatScreenState extends State<ChatScreen> {
               chatProvider.sendMessage(text);
             },
             isProcessing: chatProvider.isProcessing,
+            onMicPressed: () async {
+              if (voiceProvider.isListening) {
+                voiceProvider.stopListening();
+              } else {
+                await voiceProvider.startListeningWithChat(chatProvider);
+              }
+            },
+            isListening: voiceProvider.isListening,
           ),
         ],
       ),
-      // Floating action button for voice input
-      floatingActionButton: _buildVoiceFAB(voiceProvider, chatProvider),
     );
   }
 
@@ -226,29 +232,6 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ),
       ],
-    );
-  }
-
-  Widget _buildVoiceFAB(
-    VoiceProvider voiceProvider,
-    ChatProvider chatProvider,
-  ) {
-    return FloatingActionButton(
-      backgroundColor: voiceProvider.isListening
-          ? Colors.red
-          : Theme.of(context).colorScheme.primary,
-      foregroundColor: Colors.white,
-      tooltip: voiceProvider.isListening
-          ? 'Stop listening'
-          : 'Start voice input',
-      onPressed: () async {
-        if (voiceProvider.isListening) {
-          voiceProvider.stopListening();
-        } else {
-          await voiceProvider.startListeningWithChat(chatProvider);
-        }
-      },
-      child: Icon(voiceProvider.isListening ? Icons.stop : Icons.mic, size: 28),
     );
   }
 

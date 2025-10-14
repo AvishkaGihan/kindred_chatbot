@@ -4,11 +4,15 @@ import '../theme/app_theme.dart';
 class ChatInput extends StatefulWidget {
   final Function(String) onSendMessage;
   final bool isProcessing;
+  final VoidCallback? onMicPressed;
+  final bool isListening;
 
   const ChatInput({
     super.key,
     required this.onSendMessage,
     required this.isProcessing,
+    this.onMicPressed,
+    this.isListening = false,
   });
 
   @override
@@ -19,6 +23,17 @@ class ChatInput extends StatefulWidget {
 class _ChatInputState extends State<ChatInput> {
   final _textController = TextEditingController();
   final _focusNode = FocusNode();
+  bool _hasText = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _textController.addListener(() {
+      setState(() {
+        _hasText = _textController.text.trim().isNotEmpty;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,6 +100,19 @@ class _ChatInputState extends State<ChatInput> {
                                 ),
                               ),
                             ),
+                          )
+                        : (!_hasText && widget.onMicPressed != null)
+                        ? IconButton(
+                            icon: Icon(
+                              widget.isListening ? Icons.mic : Icons.mic_none,
+                              color: widget.isListening
+                                  ? Colors.red
+                                  : AppTheme.primaryBlue,
+                            ),
+                            onPressed: widget.onMicPressed,
+                            tooltip: widget.isListening
+                                ? 'Stop listening'
+                                : 'Voice input',
                           )
                         : null,
                   ),
