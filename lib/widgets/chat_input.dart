@@ -87,21 +87,10 @@ class _ChatInputState extends State<ChatInput> {
                       horizontal: 20,
                       vertical: 12,
                     ),
-                    suffixIcon: widget.isProcessing
-                        ? Padding(
-                            padding: const EdgeInsets.all(12),
-                            child: SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  AppTheme.primaryBlue,
-                                ),
-                              ),
-                            ),
-                          )
-                        : (!_hasText && widget.onMicPressed != null)
+                    suffixIcon:
+                        (!_hasText &&
+                            widget.onMicPressed != null &&
+                            !widget.isProcessing)
                         ? IconButton(
                             icon: Icon(
                               widget.isListening ? Icons.mic : Icons.mic_none,

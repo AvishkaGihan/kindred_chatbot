@@ -5,7 +5,6 @@ import '../providers/voice_provider.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/message_bubble.dart';
 import '../widgets/chat_input.dart';
-import '../widgets/loading_indicator.dart';
 import '../widgets/chat_shimmer.dart';
 import '../models/message_model.dart';
 import '../theme/app_theme.dart';
@@ -133,23 +132,20 @@ class _ChatScreenState extends State<ChatScreen> {
             child: StreamBuilder<List<MessageModel>>(
               stream: chatProvider.messagesStream,
               builder: (context, snapshot) {
-                // Show shimmer on initial load
+                // Show shimmer on initial load only
                 if (chatProvider.isInitialLoading &&
                     snapshot.connectionState == ConnectionState.waiting) {
                   return const ChatShimmer();
                 }
 
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const LoadingIndicator();
-                }
-
+                // Handle errors
                 if (snapshot.hasError) {
                   return const Center(child: Text('Error loading messages'));
                 }
 
                 final messages = snapshot.data ?? [];
 
-                if (messages.isEmpty) {
+                if (messages.isEmpty && !chatProvider.isProcessing) {
                   return _buildEmptyState(context);
                 }
 
@@ -160,8 +156,13 @@ class _ChatScreenState extends State<ChatScreen> {
                 return ListView.builder(
                   controller: _scrollController,
                   padding: const EdgeInsets.all(16),
-                  itemCount: messages.length,
+                  itemCount:
+                      messages.length + (chatProvider.isProcessing ? 1 : 0),
                   itemBuilder: (context, index) {
+                    // Show typing indicator as last item when processing
+                    if (index == messages.length && chatProvider.isProcessing) {
+                      return _buildTypingIndicator();
+                    }
                     final message = messages[index];
                     return MessageBubble(message: message);
                   },
@@ -350,6 +351,69 @@ class _ChatScreenState extends State<ChatScreen> {
       },
       backgroundColor: AppTheme.primaryBlue.withValues(alpha: 0.1),
       side: BorderSide(color: AppTheme.primaryBlue.withValues(alpha: 0.3)),
+    );
+  }
+
+  Widget _buildTypingIndicator() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: AppTheme.primaryBlue.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildTypingDot(0),
+                const SizedBox(width: 4),
+                _buildTypingDot(1),
+                const SizedBox(width: 4),
+                _buildTypingDot(2),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTypingDot(int index) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: Duration(milliseconds: 600),
+      curve: Curves.easeInOut,
+      builder: (context, value, child) {
+        final delay = index * 0.2;
+        final animationValue = ((value + delay) % 1.0);
+        final opacity =
+            0.3 +
+            (0.7 *
+                (0.5 +
+                    0.5 *
+                        (animationValue > 0.5
+                            ? 1 - animationValue
+                            : animationValue) *
+                        2));
+
+        return Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(
+            color: AppTheme.primaryBlue.withValues(alpha: opacity),
+            shape: BoxShape.circle,
+          ),
+        );
+      },
+      onEnd: () {
+        // Restart animation
+        if (mounted) {
+          setState(() {});
+        }
+      },
     );
   }
 
