@@ -42,14 +42,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<bool> signInWithGoogle() async {
-    _isLoading = true;
-    notifyListeners();
-
     final user = await _authService.signInWithGoogle();
-
-    _isLoading = false;
-    notifyListeners();
-
     return user != null;
   }
 
