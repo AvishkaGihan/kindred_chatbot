@@ -1,4 +1,6 @@
 // models/chat_session_model.dart
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class ChatSession {
   final String sessionId;
   final String userId;
@@ -28,13 +30,27 @@ class ChatSession {
   }
 
   factory ChatSession.fromMap(Map<String, dynamic> map) {
+    // Helper function to convert both Timestamp and int to DateTime
+    DateTime convertToDateTime(dynamic value) {
+      if (value is Timestamp) {
+        // Old data format - Firestore Timestamp
+        return value.toDate();
+      } else if (value is int) {
+        // New data format - milliseconds since epoch
+        return DateTime.fromMillisecondsSinceEpoch(value);
+      } else {
+        // Fallback to current time if something goes wrong
+        return DateTime.now();
+      }
+    }
+
     return ChatSession(
       sessionId: map['sessionId'],
       userId: map['userId'],
       title: map['title'],
-      lastActivity: DateTime.fromMillisecondsSinceEpoch(map['lastActivity']),
+      lastActivity: convertToDateTime(map['lastActivity']),
       messageCount: map['messageCount'],
-      createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt']),
+      createdAt: convertToDateTime(map['createdAt']),
     );
   }
 

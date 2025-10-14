@@ -132,7 +132,7 @@ class ChatService {
           .collection('chat_sessions')
           .doc(sessionId)
           .update({
-            'lastActivity': DateTime.now(),
+            'lastActivity': DateTime.now().millisecondsSinceEpoch,
             'messageCount': messagesSnapshot.docs.length,
             'title': await _generateSessionTitle(userId, sessionId),
           });
@@ -177,7 +177,10 @@ class ChatService {
   Stream<List<MessageModel>> getMessages(String userId, {String? sessionId}) {
     final targetSessionId = sessionId ?? _currentSessionId;
 
+    debugPrint('📖 Loading messages for session: $targetSessionId');
+
     if (targetSessionId == null) {
+      debugPrint('⚠️ No session ID available, returning empty stream');
       return Stream.value([]);
     }
 
@@ -190,6 +193,7 @@ class ChatService {
         .orderBy('timestamp', descending: false)
         .snapshots()
         .map((snapshot) {
+          debugPrint('📬 Received ${snapshot.docs.length} messages');
           return snapshot.docs.map((doc) {
             return MessageModel.fromMap(doc.data());
           }).toList();
@@ -198,6 +202,13 @@ class ChatService {
 
   // Get all chat sessions for a user
   Stream<List<ChatSession>> getChatSessions(String userId) {
+    debugPrint('📂 Loading chat sessions for user: $userId');
+
+    if (userId.isEmpty) {
+      debugPrint('⚠️ User ID is empty, returning empty stream');
+      return Stream.value([]);
+    }
+
     return _firestore
         .collection('users')
         .doc(userId)
@@ -205,6 +216,7 @@ class ChatService {
         .orderBy('lastActivity', descending: true)
         .snapshots()
         .map((snapshot) {
+          debugPrint('📋 Received ${snapshot.docs.length} chat sessions');
           return snapshot.docs.map((doc) {
             return ChatSession.fromMap(doc.data());
           }).toList();
@@ -239,9 +251,9 @@ class ChatService {
             'sessionId': sessionId,
             'userId': userId,
             'title': 'New Chat',
-            'lastActivity': DateTime.now(),
+            'lastActivity': DateTime.now().millisecondsSinceEpoch,
             'messageCount': 0,
-            'createdAt': DateTime.now(),
+            'createdAt': DateTime.now().millisecondsSinceEpoch,
           });
 
       _currentSessionId = sessionId;
@@ -292,10 +304,46 @@ class ChatService {
   }
 
   Future<void> saveUserMessage(MessageModel message, String userId) async {
+    debugPrint('💬 Saving user message: ${message.id} for user: $userId');
     await _ensureCurrentSession(userId);
+    debugPrint('📝 Current session: $_currentSessionId');
     await _saveMessage(message, userId, _currentSessionId!);
+    debugPrint('✅ Message saved successfully');
     await _updateSessionActivity(userId, _currentSessionId!);
+    debugPrint('✅ Session activity updated');
   }
+
+  Future<String?> getCurrentOrLatestSession(String userId) async {
+    try {
+      debugPrint('🔍 Searching for latest session for user: $userId');
+
+      final snapshot = await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('chat_sessions')
+          .orderBy('lastActivity', descending: true)
+          .limit(1)
+          .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        final sessionId = snapshot.docs.first.data()['sessionId'] as String?;
+        debugPrint('✅ Found latest session: $sessionId');
+        return sessionId;
+      }
+
+      debugPrint('⚠️ No sessions found for user');
+      return null;
+    } catch (e) {
+      debugPrint('❌ Get current session error: $e');
+      return null;
+    }
+  }
+
+  void setCurrentSession(String sessionId) {
+    _currentSessionId = sessionId;
+  }
+
+  String? getCurrentSessionId() => _currentSessionId;
 
   String? get currentSessionId => _currentSessionId;
 }

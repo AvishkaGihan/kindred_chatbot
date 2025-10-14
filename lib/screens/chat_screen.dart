@@ -128,6 +128,24 @@ class _ChatScreenState extends State<ChatScreen> {
           if (voiceProvider.recognizedText.isNotEmpty)
             _buildRecognizedTextBanner(voiceProvider),
 
+          // Show error message if there's an error
+          if (chatProvider.lastError != null)
+            Container(
+              color: Colors.red[100],
+              padding: EdgeInsets.all(8),
+              child: Row(
+                children: [
+                  Icon(Icons.error, color: Colors.red),
+                  SizedBox(width: 8),
+                  Expanded(child: Text(chatProvider.lastError!)),
+                  IconButton(
+                    icon: Icon(Icons.close),
+                    onPressed: () => chatProvider.clearError(),
+                  ),
+                ],
+              ),
+            ),
+
           Expanded(
             child: StreamBuilder<List<MessageModel>>(
               stream: chatProvider.messagesStream,
