@@ -1,19 +1,11 @@
-// Firestore security rules
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Users can only access their own data
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
 
-      // Chat sessions subcollection
-      match /chat_sessions/{sessionId} {
+      match /chats/{chatId} {
         allow read, write: if request.auth != null && request.auth.uid == userId;
-
-        // Messages subcollection
-        match /messages/{messageId} {
-          allow read, write: if request.auth != null && request.auth.uid == userId;
-        }
       }
     }
   }
