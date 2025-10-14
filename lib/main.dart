@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
             themeMode: themeProvider.themeMode,
             home: Consumer<AuthProvider>(
               builder: (context, authProvider, child) {
-                if (authProvider.isLoading) {
+                if (authProvider.isInitializing) {
                   return const Scaffold(
                     body: Center(child: CircularProgressIndicator()),
                   );

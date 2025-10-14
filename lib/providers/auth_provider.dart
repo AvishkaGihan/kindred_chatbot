@@ -6,12 +6,17 @@ class AuthProvider with ChangeNotifier {
   final AuthService _authService = AuthService();
   UserModel? _user;
   bool _isLoading = false;
+  bool _isInitializing = true;
 
   UserModel? get user => _user;
   bool get isLoading => _isLoading;
+  bool get isInitializing => _isInitializing;
 
   AuthProvider() {
     _authService.user.listen((user) {
+      if (_isInitializing) {
+        _isInitializing = false;
+      }
       _user = user;
       notifyListeners();
     });
