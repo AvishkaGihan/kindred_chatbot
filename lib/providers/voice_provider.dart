@@ -25,8 +25,14 @@ class VoiceProvider with ChangeNotifier {
   // Enhanced method that integrates with chat
   Future<void> startListeningWithChat(ChatProvider chatProvider) async {
     if (!_isInitialized) {
-      debugPrint('Speech recognition not initialized');
-      return;
+      debugPrint(
+        'Speech recognition not initialized - attempting to initialize...',
+      );
+      await _initialize();
+      if (!_isInitialized) {
+        debugPrint('Failed to initialize speech recognition');
+        return;
+      }
     }
 
     if (_isProcessingVoice) {
@@ -43,29 +49,34 @@ class VoiceProvider with ChangeNotifier {
       // Start listening and get the result
       final String? result = await _voiceService.startListening();
 
-      if (result != null && result.isNotEmpty) {
-        debugPrint('Voice recognized: $result');
+      if (result != null && result.trim().isNotEmpty) {
+        debugPrint('Voice recognized: "$result"');
 
         // Update the recognized text temporarily
-        _recognizedText = result;
+        _recognizedText = result.trim();
         notifyListeners();
 
         // Wait a moment to show the recognized text
-        await Future.delayed(Duration(milliseconds: 500));
+        await Future.delayed(const Duration(milliseconds: 500));
 
         // Automatically send the recognized text to chat
-        await chatProvider.sendMessage(result);
+        await chatProvider.sendMessage(result.trim());
 
         // Clear the recognized text after sending
         _recognizedText = '';
         notifyListeners();
 
-        debugPrint('Voice message sent to chat');
+        debugPrint('Voice message sent to chat successfully');
       } else {
-        debugPrint('No speech recognized');
+        debugPrint('No speech recognized or speech recognition failed/timeout');
+        // Clear any partial recognized text
+        _recognizedText = '';
+        notifyListeners();
       }
     } catch (e) {
       debugPrint('Error in voice listening: $e');
+      _recognizedText = '';
+      notifyListeners();
     } finally {
       _isProcessingVoice = false;
       notifyListeners();
