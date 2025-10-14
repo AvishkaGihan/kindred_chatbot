@@ -1,5 +1,5 @@
 name: kindred_chatbot
-description: "A new Flutter project."
+description: "AI Chatbot powered by Gemini Ai"
 publish_to: "none"
 version: 1.0.0+1
 
@@ -9,12 +9,40 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
+  # Firebase dependencies
   firebase_core: ^4.2.0
+  firebase_auth: ^6.1.1
+  cloud_firestore: ^6.0.3
+  firebase_ai: ^3.4.0
+
+  # Google Sign-In
+  google_sign_in: ^7.2.0
+
+  # Voice and Text-to-Speech
+  speech_to_text: ^7.3.0
+  flutter_tts: ^4.2.3
+
+  # State Management
+  provider: ^6.1.5+1
+  flutter_spinkit: ^5.2.2
+  intl: ^0.20.2
+
+  # Secure Storage
+  shared_preferences: ^2.5.3
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.4
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/icon.png"
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/images/
