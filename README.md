@@ -1,221 +1,267 @@
-<div align="center">
+# Kindred - AI Chatbot App
 
-# Kindred Chatbot
-
-Your voice-enabled AI companion built with Flutter and Firebase (2025-ready).
-
-</div>
-
-## Overview
-
-Kindred is a cross‑platform chat app that combines Firebase Authentication, Cloud Firestore, and Firebase AI (Gemini) to deliver a modern assistant experience. It includes:
-
-- Multi-platform Flutter app (Android, iOS, Web; desktop optional)
-- Authentication (Email/Password and Google Sign-In)
-- Persistent, multi-session chat history in Firestore
-- Voice input (speech-to-text) and text-to-speech playback
-- Markdown rendering for rich AI responses
-
-This repository follows 2025 best practices for Flutter, Firebase, and AI features, with clear security, privacy, and scalability guidance.
+An intelligent AI-powered chatbot application built with Flutter and Firebase AI, featuring real-time conversations, voice input/output, and persistent chat history.
 
 ## Features
 
-- Sign in: Email/Password, Google
-- Chat sessions: create, switch, delete; auto-titled based on first message
-- Realtime updates via Firestore streams
-- Voice: speech-to-text capture that auto-sends to chat; text-to-speech playback
-- AI replies powered by Firebase AI (Gemini 2.5 Flash Lite)
-- Light/Dark theme with Material 3
+- 🔐 **Secure Authentication**: Email/Password and Google OAuth
+- 💬 **AI-Powered Chat**: Real-time conversations using Firebase AI (Gemini)
+- 🎤 **Voice Input/Output**: Speech-to-text and text-to-speech capabilities
+- 💾 **Persistent Storage**: Chat history saved in Firestore
+- 🔄 **Offline Support**: Local caching with Firestore offline persistence
+- 📱 **Cross-Platform**: Native Material Design for Android and Cupertino for iOS
+- ⚡ **Real-Time Sync**: Instant message synchronization across devices
 
-## Tech Stack
+## Screenshots
 
-- Flutter (Dart 3.9+)
-- Firebase: Auth, Firestore, Firebase AI SDK
-- Packages: provider, speech_to_text, flutter_tts, flutter_markdown, cached_network_image, google_sign_in
+Screenshots coming soon.
 
 ## Architecture
 
-- Models: `MessageModel`, `ChatSession`, `UserModel`
-- Services: `AuthService`, `ChatService`, `VoiceService`
-- State: `AuthProvider`, `ChatProvider`, `VoiceProvider` (Provider + ChangeNotifier)
-- UI: screens (`login_screen.dart`, `chat_screen.dart`, `chat_history_screen.dart`, `profile_screen.dart`) and widgets (`message_bubble.dart`, `chat_input.dart`, `loading_indicator.dart`)
-
-Firestore data model (per user):
-
 ```
-users/{userId}
-	chat_sessions/{sessionId}
-		messages/{messageId}
+lib/
+├── models/          # Data models
+├── services/        # Business logic & API calls
+├── providers/       # State management
+├── screens/         # UI screens
+├── widgets/         # Reusable widgets
+└── utils/          # Helper functions & constants
 ```
 
-Rules (principle of least privilege) are defined in `firestore.rules`.
+### Tech Stack
 
-## Prerequisites
+- **Frontend**: Flutter 3.35+ (Dart 3.9+)
+- **Backend**: Firebase (Auth, Firestore, AI)
+- **State Management**: Provider
+- **AI Model**: Google Gemini 2.5 Flash
+- **Voice**: speech_to_text, flutter_tts
 
-- Flutter SDK (3.24+ recommended) and Dart (3.9+)
-- Android Studio / Xcode (for mobile)
-- Node.js 18+ (for Firebase CLI)
-- Firebase CLI and FlutterFire CLI
-  - Install: `npm i -g firebase-tools` and `dart pub global activate flutterfire_cli`
-- A Firebase project (Blaze recommended for AI usage; quotas apply)
+## Getting Started
 
-## Quick start
+### Prerequisites
 
-1. Clone and install dependencies
+- Flutter SDK 3.35 or higher
+- Dart 3.9 or higher
+- Firebase CLI
+- Android Studio / Xcode
+- Google Cloud Project with Firebase AI enabled
 
-```sh
+### Installation
+
+1. **Clone the repository**
+
+```bash
+git clone https://github.com/AvishkaGihan/kindred-chatbot.git
+cd kindred-chatbot
+```
+
+2. **Install dependencies**
+
+```bash
 flutter pub get
 ```
 
-2. Configure Firebase
+3. **Configure Firebase**
 
-This repo already includes `firebase_options.dart`, `android/app/google-services.json`, and `ios/Runner/GoogleService-Info.plist`. If you want to use your own Firebase project:
+```bash
+# Install FlutterFire CLI
+dart pub global activate flutterfire_cli
 
-- Create a Firebase project and enable:
-  - Authentication (Email/Password, Google)
-  - Firestore (Native mode)
-  - Firebase AI (Gemini access – enable in Firebase Console and accept terms)
-- Android: add your app, download `google-services.json` to `android/app/`
-  - Add SHA-1 and SHA-256 fingerprints for Google Sign-In
-- iOS: add your app, download `GoogleService-Info.plist` to `ios/Runner/`
-  - Add the reversed client ID to URL Types in Xcode (Runner target)
-- Web: ensure the app is registered, or re-run FlutterFire
-
-Regenerate local configs if needed:
-
-```sh
+# Configure Firebase
 flutterfire configure
 ```
 
-3. Apply Firestore rules and (optional) indexes
+4. **Enable Firebase Services**
 
-```sh
-firebase deploy --only firestore:rules
+   - Firebase Authentication (Email/Password, Google)
+   - Cloud Firestore
+   - Firebase AI
+
+5. **Update Firestore Security Rules**
+
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+
+      match /chats/{chatId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+  }
+}
 ```
 
-4. Run
+6. **Run the app**
 
-```sh
+```bash
+# Run on emulator/device
 flutter run
+
+# Run in release mode
+flutter run --release
 ```
 
-## Platform notes
+## Building for Production
 
-Android
+### Android (APK)
 
-- Ensure `RECORD_AUDIO` permission is present for speech-to-text.
-- Provide SHA-1/SHA-256 in Firebase Console for Google Sign-In.
-
-iOS
-
-- Add the following Info.plist keys with clear user-facing reasons:
-  - `NSMicrophoneUsageDescription`
-  - `NSSpeechRecognitionUsageDescription`
-- Configure URL Types using your reversed client ID for Google Sign-In.
-
-Web
-
-- Add domain to Firebase Auth authorized domains.
-- Google Sign-In works on web with correct OAuth client.
-
-Desktop (Windows/macOS/Linux)
-
-- Not all dependencies support desktop (e.g., `google_sign_in`), so desktop is optional. Voice features may require platform support.
-
-## Environment & secrets
-
-- Never commit private keys or service account JSON.
-- Firebase client configs (web/Android/iOS) are safe to ship but restrict access with:
-  - Firestore Security Rules (see `firestore.rules`)
-  - Authentication enforcement (all reads/writes require the signed-in user)
-  - App Check (recommended) to reduce abuse from unauthorized clients
-- For Firebase AI, ensure your project has access and quotas; usage may incur costs.
-
-## Running, linting, and tests
-
-- Run the app: `flutter run`
-- Format: `dart format .`
-- Lint/typecheck: `flutter analyze`
-- Tests: `flutter test`
-
-Note: The default widget test is a template; you may want to replace it with real tests for providers and services.
-
-## CI/CD (suggested)
-
-GitHub Actions sample workflow (Android build + analyze + test):
-
-```yaml
-name: Flutter CI
-on: [push, pull_request]
-jobs:
-	build:
-		runs-on: ubuntu-latest
-		steps:
-			- uses: actions/checkout@v4
-			- uses: subosito/flutter-action@v2
-				with:
-					channel: stable
-			- run: flutter pub get
-			- run: flutter analyze
-			- run: flutter test --no-pub
-			- run: flutter build apk --debug
+```bash
+flutter build apk --release
+# Output: build/app/outputs/flutter-apk/app-release.apk
 ```
 
-For releases, sign artifacts and configure Play/App Store workflows.
+### Android (App Bundle)
 
-## Security & privacy
+```bash
+flutter build appbundle --release
+# Output: build/app/outputs/bundle/release/app-release.aab
+```
 
-- Authentication required for all reads/writes; users can only access their own data (see `firestore.rules`).
-- Store only necessary personal data (email, display name, photo URL). Avoid storing tokens or secrets in Firestore.
-- Consider enabling App Check and rate limiting for AI endpoints.
-- Document data retention and deletion policy for user requests.
+### iOS
 
-## Accessibility and i18n
+```bash
+flutter build ios --release
+# Then use Xcode to archive and upload to TestFlight
+```
 
-- Uses Material 3 with dark mode. Ensure sufficient color contrast and large tap targets.
-- Voice features should provide visual feedback and alternative text input.
-- Internationalization (i18n): add `flutter_localizations` and ARB files if you plan to localize.
+## Configuration
+
+### Firebase AI Setup
+
+1. Go to [Firebase Console](https://console.firebase.google.com/)
+2. Enable Firebase AI in your project
+3. The app uses `gemini-2.5-flash` model by default
+
+### Customizing AI Responses
+
+Edit `lib/services/ai_service.dart`:
+
+```dart
+final ai = FirebaseAI.googleAI();
+_model = ai.generativeModel(
+  model: 'gemini-2.5-flash',
+  generationConfig: GenerationConfig(
+    temperature: 0.7,  // Adjust creativity (0.0 - 1.0)
+    maxOutputTokens: 1000,  // Adjust response length
+  ),
+);
+```
+
+## Project Structure
+
+```
+kindred_chatbot/
+├── android/              # Android native code
+├── ios/                  # iOS native code
+├── lib/
+│   ├── main.dart        # App entry point
+│   ├── models/          # Data models
+│   ├── providers/       # State management
+│   ├── screens/         # UI screens
+│   ├── services/        # Business logic
+│   ├── utils/           # Utilities
+│   └── widgets/         # Reusable widgets
+├── test/                # Unit & widget tests
+├── assets/              # Images & resources
+└── pubspec.yaml         # Dependencies
+```
+
+## Features Implementation
+
+### Authentication Flow
+
+1. User signs in with email/password or Google
+2. Firebase Auth creates user session
+3. User document created in Firestore
+4. Redirected to chat screen
+
+### Chat Flow
+
+1. User sends message
+2. Message saved to Firestore
+3. Firebase AI processes message
+4. AI response received and saved
+5. Real-time UI update via StreamBuilder
+
+### Voice Features
+
+- **Speech-to-Text**: Uses `speech_to_text` package
+- **Text-to-Speech**: Uses `flutter_tts` package
+- Permissions handled automatically
 
 ## Troubleshooting
 
-- Google Sign-In errors
-  - Android: missing SHA-1/SHA-256 or mismatched package name.
-  - iOS: missing URL Types (reversed client ID) in Xcode.
-- Firestore permission denied
-  - Ensure you are logged in; confirm `firestore.rules` are deployed; check `request.auth.uid`.
-- Speech-to-text not working
-  - Check microphone permissions and supported locales on device.
-- Firebase AI errors
-  - Ensure Firebase AI is enabled for your project; check billing/quota; verify the model name matches availability (we use `gemini-2.5-flash-lite`).
-- Web auth popup blocked
-  - Allow popups or use redirect mode for Google Sign-In.
+### Common Issues
 
-## Folder structure
+**1. Firebase Configuration Error**
 
-```
-lib/
-	models/
-	providers/
-	screens/
-	services/
-	widgets/
-firebase.json
-firestore.rules
-firestore.indexes.json
+```bash
+# Reconfigure Firebase
+flutterfire configure --force
 ```
 
-## Roadmap ideas
+**2. Firebase AI Not Enabled**
 
-- Streaming AI responses and typing indicators
-- Attachments/images with on-device or cloud processing
-- Offline caching and message resend
-- Push notifications (FCM)
-- App Check and enhanced telemetry
+- Go to Firebase Console
+- Enable Firebase AI in your project
+- Wait a few minutes for propagation
+
+**3. Voice Input Not Working**
+
+- Check microphone permissions
+- Ensure device has microphone
+- Test on physical device (not emulator)
+
+**4. Build Failures**
+
+```bash
+# Clean and rebuild
+flutter clean
+flutter pub get
+flutter run
+```
+
+## Best Practices
+
+1. **Error Handling**: All services include try-catch blocks
+2. **Loading States**: Show progress indicators during async operations
+3. **Offline Support**: Firestore automatically caches data
+4. **Security**: Never expose API keys in client code
+5. **Testing**: Run tests before each release
+
+```bash
+flutter test
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
----
+## Acknowledgments
 
-Happy building! If you run into issues, check Troubleshooting above or open an issue with logs, platform, and Flutter/Dart versions.
+- Flutter team for the amazing framework
+- Firebase for backend services
+- Google for Vertex AI and Gemini models
+
+## Contact
+
+Avishka Gihan
+
+Project Link: [https://github.com/AvishkaGihan/kindred-chatbot](https://github.com/AvishkaGihan/kindred-chatbot)
+
+## Demo
+
+📹 **Demo Video**: Coming soon
+
+🌐 **Try TestFlight Beta**: Coming soon

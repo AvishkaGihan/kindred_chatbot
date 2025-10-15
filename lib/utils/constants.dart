@@ -8,8 +8,8 @@ class AppConstants {
   static const String chatsCollection = 'chats';
   static const String messagesCollection = 'messages';
 
-  // Vertex AI Model
-  static const String aiModel = 'gemini-1.5-flash';
+  // Firebase AI Model
+  static const String aiModel = 'gemini-2.5-flash';
 
   // Message Limits
   static const int maxMessageLength = 1000;
