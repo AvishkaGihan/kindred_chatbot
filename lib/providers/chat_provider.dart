@@ -4,12 +4,14 @@ import '../models/chat_session_model.dart';
 import '../services/ai_service.dart';
 import '../services/firestore_service.dart';
 import '../services/voice_service.dart';
+import '../services/cache_service.dart';
 import '../utils/helpers.dart';
 
 class ChatProvider with ChangeNotifier {
   final AIService _aiService = AIService();
   final FirestoreService _firestoreService = FirestoreService();
   final VoiceService _voiceService = VoiceService();
+  final CacheService _cacheService = CacheService();
 
   List<MessageModel> _messages = [];
   List<ChatSessionModel> _sessions = [];
@@ -53,12 +55,20 @@ class ChatProvider with ChangeNotifier {
   }
 
   // Load chat session
-  void loadChatSession(String userId, String sessionId) {
+  void loadChatSession(String userId, String sessionId) async {
     _currentSessionId = sessionId;
-    _messages = [];
 
+    // Try to load from cache first
+    final cachedMessages = await _cacheService.getCachedMessages(sessionId);
+    if (cachedMessages != null) {
+      _messages = cachedMessages;
+      notifyListeners();
+    }
+
+    // Then load from Firestore
     _firestoreService.getMessagesStream(userId, sessionId).listen((messages) {
       _messages = messages;
+      _cacheService.cacheMessages(sessionId, messages);
       notifyListeners();
     });
   }
