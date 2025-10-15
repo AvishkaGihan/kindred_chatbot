@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
+import '../widgets/loading_widget.dart';
 import 'auth/login_screen.dart';
 import 'chat/chat_screen.dart';
 
@@ -61,7 +62,7 @@ class _SplashScreenState extends State<SplashScreen> {
               ).textTheme.bodyLarge?.copyWith(color: Colors.grey),
             ),
             const SizedBox(height: 40),
-            const CircularProgressIndicator(),
+            const LoadingWidget(),
           ],
         ),
       ),

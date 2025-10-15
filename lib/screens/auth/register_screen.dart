@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../utils/constants.dart';
 import '../../utils/helpers.dart';
+import '../../widgets/loading_widget.dart';
 import '../chat/chat_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -193,13 +194,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                         ),
                         child: authProvider.isLoading
-                            ? const SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              )
+                            ? const LoadingWidget(color: Colors.white)
                             : const Text(
                                 'Create Account',
                                 style: TextStyle(fontSize: 16),

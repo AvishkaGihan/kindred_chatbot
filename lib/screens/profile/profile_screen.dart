@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/chat_provider.dart';
+import '../../widgets/loading_widget.dart';
 import '../auth/login_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -16,7 +17,7 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Profile')),
       body: user == null
-          ? const Center(child: CircularProgressIndicator())
+          ? const LoadingWidget(message: 'Loading profile...')
           : SingleChildScrollView(
               padding: const EdgeInsets.all(24),
               child: Column(
