@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/message_model.dart';
 import '../models/chat_session_model.dart';
+import '../utils/constants.dart';
 
 class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -13,11 +14,11 @@ class FirestoreService {
   ) async {
     try {
       await _firestore
-          .collection('users')
+          .collection(AppConstants.usersCollection)
           .doc(userId)
-          .collection('chats')
+          .collection(AppConstants.chatsCollection)
           .doc(sessionId)
-          .collection('messages')
+          .collection(AppConstants.messagesCollection)
           .doc(message.id)
           .set(message.toFirestore());
 
@@ -34,11 +35,11 @@ class FirestoreService {
     String sessionId,
   ) {
     return _firestore
-        .collection('users')
+        .collection(AppConstants.usersCollection)
         .doc(userId)
-        .collection('chats')
+        .collection(AppConstants.chatsCollection)
         .doc(sessionId)
-        .collection('messages')
+        .collection(AppConstants.messagesCollection)
         .orderBy('timestamp', descending: false)
         .snapshots()
         .map(
@@ -52,9 +53,9 @@ class FirestoreService {
   Future<String> createChatSession(String userId) async {
     try {
       final sessionRef = _firestore
-          .collection('users')
+          .collection(AppConstants.usersCollection)
           .doc(userId)
-          .collection('chats')
+          .collection(AppConstants.chatsCollection)
           .doc();
 
       final session = ChatSessionModel(
@@ -75,9 +76,9 @@ class FirestoreService {
   Future<void> updateChatSession(String userId, String sessionId) async {
     try {
       await _firestore
-          .collection('users')
+          .collection(AppConstants.usersCollection)
           .doc(userId)
-          .collection('chats')
+          .collection(AppConstants.chatsCollection)
           .doc(sessionId)
           .update({'lastUpdated': DateTime.now().toIso8601String()});
     } catch (e) {
@@ -88,9 +89,9 @@ class FirestoreService {
   // Get chat sessions
   Stream<List<ChatSessionModel>> getChatSessionsStream(String userId) {
     return _firestore
-        .collection('users')
+        .collection(AppConstants.usersCollection)
         .doc(userId)
-        .collection('chats')
+        .collection(AppConstants.chatsCollection)
         .orderBy('lastUpdated', descending: true)
         .snapshots()
         .map(
@@ -105,11 +106,11 @@ class FirestoreService {
     try {
       // Delete all messages in the session
       final messagesSnapshot = await _firestore
-          .collection('users')
+          .collection(AppConstants.usersCollection)
           .doc(userId)
-          .collection('chats')
+          .collection(AppConstants.chatsCollection)
           .doc(sessionId)
-          .collection('messages')
+          .collection(AppConstants.messagesCollection)
           .get();
 
       for (var doc in messagesSnapshot.docs) {
@@ -118,13 +119,31 @@ class FirestoreService {
 
       // Delete the session
       await _firestore
-          .collection('users')
+          .collection(AppConstants.usersCollection)
           .doc(userId)
-          .collection('chats')
+          .collection(AppConstants.chatsCollection)
           .doc(sessionId)
           .delete();
     } catch (e) {
       throw Exception('Failed to delete chat session: $e');
+    }
+  }
+
+  // Update chat session title
+  Future<void> updateChatSessionTitle(
+    String userId,
+    String sessionId,
+    String title,
+  ) async {
+    try {
+      await _firestore
+          .collection(AppConstants.usersCollection)
+          .doc(userId)
+          .collection(AppConstants.chatsCollection)
+          .doc(sessionId)
+          .update({'title': title});
+    } catch (e) {
+      throw Exception('Failed to update chat session title: $e');
     }
   }
 }

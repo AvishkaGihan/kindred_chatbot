@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
+import '../../utils/constants.dart';
+import '../../utils/helpers.dart';
 import '../chat/chat_screen.dart';
 import 'register_screen.dart';
 
@@ -87,7 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 20),
                   Text(
-                    'Welcome to Kindred',
+                    'Welcome to ${AppConstants.appName}',
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -114,7 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your email';
                       }
-                      if (!value.contains('@')) {
+                      if (!AppHelpers.isValidEmail(value)) {
                         return 'Please enter a valid email';
                       }
                       return null;

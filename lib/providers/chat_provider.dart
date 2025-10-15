@@ -4,6 +4,7 @@ import '../models/chat_session_model.dart';
 import '../services/ai_service.dart';
 import '../services/firestore_service.dart';
 import '../services/voice_service.dart';
+import '../utils/helpers.dart';
 
 class ChatProvider with ChangeNotifier {
   final AIService _aiService = AIService();
@@ -114,6 +115,17 @@ class ChatProvider with ChangeNotifier {
         _currentSessionId!,
         aiMessage,
       );
+
+      // Update chat title if this is the first message
+      if (_messages.length == 2) {
+        // First user message and first AI response
+        final chatTitle = AppHelpers.generateChatTitle(content);
+        await _firestoreService.updateChatSessionTitle(
+          userId,
+          _currentSessionId!,
+          chatTitle,
+        );
+      }
 
       _setLoading(false);
     } catch (e) {

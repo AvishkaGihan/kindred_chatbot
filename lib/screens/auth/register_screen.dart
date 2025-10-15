@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
+import '../../utils/constants.dart';
+import '../../utils/helpers.dart';
 import '../chat/chat_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -68,7 +70,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    'Join Kindred',
+                    'Join ${AppConstants.appName}',
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -111,7 +113,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your email';
                       }
-                      if (!value.contains('@')) {
+                      if (!AppHelpers.isValidEmail(value)) {
                         return 'Please enter a valid email';
                       }
                       return null;

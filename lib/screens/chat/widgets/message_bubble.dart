@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import '../../../models/message_model.dart';
+import '../../../utils/helpers.dart';
 
 class MessageBubble extends StatelessWidget {
   final MessageModel message;
@@ -66,7 +66,7 @@ class MessageBubble extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        DateFormat('HH:mm').format(message.timestamp),
+                        AppHelpers.formatTimestamp(message.timestamp),
                         style: TextStyle(
                           color: isUser ? Colors.white70 : Colors.grey[600],
                           fontSize: 11,

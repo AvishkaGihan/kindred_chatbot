@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kindred_chatbot/models/user_model.dart';
+import '../utils/constants.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -67,7 +68,7 @@ class AuthService {
       final userCredential = await _auth.signInWithCredential(credential);
 
       final userDoc = await _firestore
-          .collection('users')
+          .collection(AppConstants.usersCollection)
           .doc(userCredential.user?.uid)
           .get();
 
@@ -100,7 +101,7 @@ class AuthService {
     );
 
     await _firestore
-        .collection('users')
+        .collection(AppConstants.usersCollection)
         .doc(user.uid)
         .set(userModel.toFirestore(), SetOptions(merge: true));
   }

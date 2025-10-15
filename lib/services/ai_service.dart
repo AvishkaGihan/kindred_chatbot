@@ -1,5 +1,6 @@
 import 'package:firebase_ai/firebase_ai.dart';
 import '../models/message_model.dart';
+import '../utils/constants.dart';
 
 class AIService {
   late final GenerativeModel _model;
@@ -9,7 +10,7 @@ class AIService {
     // Initialize Firebase AI Gemini model
     final ai = FirebaseAI.googleAI();
     _model = ai.generativeModel(
-      model: 'gemini-2.5-flash',
+      model: AppConstants.aiModel,
       generationConfig: GenerationConfig(
         temperature: 0.7,
         maxOutputTokens: 1000,
