@@ -5,6 +5,7 @@ import '../services/ai_service.dart';
 import '../services/firestore_service.dart';
 import '../services/voice_service.dart';
 import '../services/cache_service.dart';
+import '../services/analytics_service.dart';
 import '../utils/helpers.dart';
 
 class ChatProvider with ChangeNotifier {
@@ -12,6 +13,7 @@ class ChatProvider with ChangeNotifier {
   final FirestoreService _firestoreService = FirestoreService();
   final VoiceService _voiceService = VoiceService();
   final CacheService _cacheService = CacheService();
+  final AnalyticsService _analytics = AnalyticsService();
 
   List<MessageModel> _messages = [];
   List<ChatSessionModel> _sessions = [];
@@ -47,9 +49,11 @@ class ChatProvider with ChangeNotifier {
       _currentSessionId = await _firestoreService.createChatSession(userId);
       _messages = [];
       _aiService.resetChat();
+      await _analytics.logChatSessionCreated();
       notifyListeners();
     } catch (e) {
       _errorMessage = e.toString();
+      await _analytics.recordError(e, StackTrace.current);
       notifyListeners();
     }
   }
@@ -102,6 +106,9 @@ class ChatProvider with ChangeNotifier {
         userMessage,
       );
 
+      // Log analytics
+      await _analytics.logMessageSent();
+
       // Get AI response
       final aiResponse = await _aiService.sendMessageWithContext(
         content,
@@ -150,6 +157,7 @@ class ChatProvider with ChangeNotifier {
 
       _messages.add(errorMessage);
       _errorMessage = e.toString();
+      await _analytics.recordError(e, StackTrace.current);
       _setLoading(false);
       notifyListeners();
     }
@@ -159,6 +167,8 @@ class ChatProvider with ChangeNotifier {
   Future<void> startVoiceInput(Function(String) onResult) async {
     _isListening = true;
     notifyListeners();
+
+    await _analytics.logVoiceInput();
 
     await _voiceService.startListening(
       onResult: (text) {

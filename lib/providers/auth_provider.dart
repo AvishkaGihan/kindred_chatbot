@@ -1,9 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../services/auth_service.dart';
+import '../services/analytics_service.dart';
 
 class AuthProvider with ChangeNotifier {
   final AuthService _authService = AuthService();
+  final AnalyticsService _analytics = AnalyticsService();
   User? _user;
   bool _isLoading = false;
   String? _errorMessage;
@@ -27,10 +29,15 @@ class AuthProvider with ChangeNotifier {
 
     try {
       await _authService.signInWithEmail(email, password);
+      await _analytics.logLogin('email');
+      if (_user != null) {
+        await _analytics.setUserId(_user!.uid);
+      }
       _setLoading(false);
       return true;
     } catch (e) {
       _errorMessage = e.toString();
+      await _analytics.recordError(e, StackTrace.current);
       _setLoading(false);
       notifyListeners();
       return false;
@@ -48,10 +55,15 @@ class AuthProvider with ChangeNotifier {
 
     try {
       await _authService.registerWithEmail(email, password, displayName);
+      await _analytics.logSignUp('email');
+      if (_user != null) {
+        await _analytics.setUserId(_user!.uid);
+      }
       _setLoading(false);
       return true;
     } catch (e) {
       _errorMessage = e.toString();
+      await _analytics.recordError(e, StackTrace.current);
       _setLoading(false);
       notifyListeners();
       return false;
@@ -65,10 +77,15 @@ class AuthProvider with ChangeNotifier {
 
     try {
       await _authService.signInWithGoogle();
+      await _analytics.logLogin('google');
+      if (_user != null) {
+        await _analytics.setUserId(_user!.uid);
+      }
       _setLoading(false);
       return true;
     } catch (e) {
       _errorMessage = e.toString();
+      await _analytics.recordError(e, StackTrace.current);
       _setLoading(false);
       notifyListeners();
       return false;
