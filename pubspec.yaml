@@ -31,6 +31,9 @@ dependencies:
   # Secure Storage
   shared_preferences: ^2.5.3
 
+  # Logging
+  logging: ^1.2.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

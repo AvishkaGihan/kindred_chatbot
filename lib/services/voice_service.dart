@@ -1,10 +1,13 @@
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:logging/logging.dart';
 
 class VoiceService {
   final stt.SpeechToText _speech = stt.SpeechToText();
   final FlutterTts _tts = FlutterTts();
   bool _isInitialized = false;
+
+  final Logger _logger = Logger('VoiceService');
 
   // Initialize services
   Future<void> initialize() async {
@@ -12,8 +15,9 @@ class VoiceService {
 
     try {
       _isInitialized = await _speech.initialize(
-        onError: (error) => print('Speech recognition error: $error'),
-        onStatus: (status) => print('Speech recognition status: $status'),
+        onError: (error) => _logger.severe('Speech recognition error: $error'),
+        onStatus: (status) =>
+            _logger.info('Speech recognition status: $status'),
       );
 
       await _tts.setLanguage('en-US');
@@ -21,7 +25,7 @@ class VoiceService {
       await _tts.setVolume(1.0);
       await _tts.setPitch(1.0);
     } catch (e) {
-      print('Voice service initialization error: $e');
+      _logger.severe('Voice service initialization error: $e');
     }
   }
 
@@ -50,7 +54,7 @@ class VoiceService {
         pauseFor: const Duration(seconds: 3),
       );
     } catch (e) {
-      print('Start listening error: $e');
+      _logger.severe('Start listening error: $e');
       onError();
     }
   }
@@ -68,7 +72,7 @@ class VoiceService {
     try {
       await _tts.speak(text);
     } catch (e) {
-      print('Text-to-speech error: $e');
+      _logger.severe('Text-to-speech error: $e');
     }
   }
 
