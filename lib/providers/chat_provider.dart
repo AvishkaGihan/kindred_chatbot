@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/message_model.dart';
 import '../models/chat_session_model.dart';
 import '../services/ai_service.dart';
@@ -14,6 +15,7 @@ class ChatProvider with ChangeNotifier {
   final VoiceService _voiceService = VoiceService();
   final CacheService _cacheService = CacheService();
   final AnalyticsService _analytics = AnalyticsService();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   List<MessageModel> _messages = [];
   List<ChatSessionModel> _sessions = [];
@@ -22,12 +24,18 @@ class ChatProvider with ChangeNotifier {
   bool _isListening = false;
   String? _errorMessage;
 
+  // Pagination support
+  final int _messageLimit = 50;
+  bool _hasMore = true;
+  DocumentSnapshot? _lastDocument;
+
   List<MessageModel> get messages => _messages;
   List<ChatSessionModel> get sessions => _sessions;
   String? get currentSessionId => _currentSessionId;
   bool get isLoading => _isLoading;
   bool get isListening => _isListening;
   String? get errorMessage => _errorMessage;
+  bool get hasMore => _hasMore;
 
   // Initialize chat provider
   Future<void> initialize(String userId) async {
@@ -48,6 +56,8 @@ class ChatProvider with ChangeNotifier {
     try {
       _currentSessionId = await _firestoreService.createChatSession(userId);
       _messages = [];
+      _hasMore = true;
+      _lastDocument = null;
       _aiService.resetChat();
       await _analytics.logChatSessionCreated();
       notifyListeners();
@@ -61,6 +71,8 @@ class ChatProvider with ChangeNotifier {
   // Load chat session
   void loadChatSession(String userId, String sessionId) async {
     _currentSessionId = sessionId;
+    _hasMore = true;
+    _lastDocument = null;
 
     // Try to load from cache first
     final cachedMessages = await _cacheService.getCachedMessages(sessionId);
@@ -75,6 +87,51 @@ class ChatProvider with ChangeNotifier {
       _cacheService.cacheMessages(sessionId, messages);
       notifyListeners();
     });
+  }
+
+  // Load more messages (pagination)
+  Future<void> loadMoreMessages(String userId, String sessionId) async {
+    if (!_hasMore || _isLoading) return;
+
+    _setLoading(true);
+
+    try {
+      Query query = _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('chats')
+          .doc(sessionId)
+          .collection('messages')
+          .orderBy('timestamp', descending: true)
+          .limit(_messageLimit);
+
+      if (_lastDocument != null) {
+        query = query.startAfterDocument(_lastDocument!);
+      }
+
+      final snapshot = await query.get();
+
+      if (snapshot.docs.isEmpty) {
+        _hasMore = false;
+      } else {
+        _lastDocument = snapshot.docs.last;
+        final newMessages = snapshot.docs
+            .map(
+              (doc) => MessageModel.fromFirestore(
+                doc.data() as Map<String, dynamic>,
+              ),
+            )
+            .toList();
+
+        _messages.insertAll(0, newMessages.reversed);
+        notifyListeners();
+      }
+
+      _setLoading(false);
+    } catch (e) {
+      _setLoading(false);
+      throw Exception('Failed to load more messages: $e');
+    }
   }
 
   // Send message

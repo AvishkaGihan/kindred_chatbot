@@ -134,19 +134,31 @@ class _ChatScreenState extends State<ChatScreen> {
                     ],
                   ),
                 )
-              : ListView.builder(
-                  controller: _scrollController,
-                  padding: const EdgeInsets.all(16),
-                  itemCount: chatProvider.messages.length,
-                  itemBuilder: (context, index) {
-                    final message = chatProvider.messages[index];
-                    return MessageBubble(
-                      message: message,
-                      onSpeak: () {
-                        chatProvider.speakMessage(message.content);
-                      },
-                    );
+              : RefreshIndicator(
+                  onRefresh: () async {
+                    if (authProvider.user != null &&
+                        chatProvider.currentSessionId != null &&
+                        chatProvider.hasMore) {
+                      await chatProvider.loadMoreMessages(
+                        authProvider.user!.uid,
+                        chatProvider.currentSessionId!,
+                      );
+                    }
                   },
+                  child: ListView.builder(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.all(16),
+                    itemCount: chatProvider.messages.length,
+                    itemBuilder: (context, index) {
+                      final message = chatProvider.messages[index];
+                      return MessageBubble(
+                        message: message,
+                        onSpeak: () {
+                          chatProvider.speakMessage(message.content);
+                        },
+                      );
+                    },
+                  ),
                 ),
         ),
         if (chatProvider.isLoading)
