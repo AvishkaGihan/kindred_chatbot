@@ -1,9 +1,11 @@
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'dart:async';
+import 'package:logging/logging.dart';
 
 class SubscriptionService {
   final InAppPurchase _iap = InAppPurchase.instance;
   StreamSubscription<List<PurchaseDetails>>? _subscription;
+  final Logger _logger = Logger('SubscriptionService');
 
   // Product IDs
   static const String premiumMonthly = 'kindred_premium_monthly';
@@ -19,7 +21,7 @@ class SubscriptionService {
     _subscription = _iap.purchaseStream.listen(
       _onPurchaseUpdate,
       onDone: () => _subscription?.cancel(),
-      onError: (error) => print('Purchase error: $error'),
+      onError: (error) => _logger.severe('Purchase error: $error'),
     );
 
     // Check existing purchases
@@ -30,7 +32,7 @@ class SubscriptionService {
     try {
       await _iap.restorePurchases();
     } catch (e) {
-      print('Restore purchases error: $e');
+      _logger.severe('Restore purchases error: $e');
     }
   }
 
@@ -39,7 +41,7 @@ class SubscriptionService {
     final ProductDetailsResponse response = await _iap.queryProductDetails(ids);
 
     if (response.notFoundIDs.isNotEmpty) {
-      print('Products not found: ${response.notFoundIDs}');
+      _logger.warning('Products not found: ${response.notFoundIDs}');
     }
 
     return response.productDetails;
@@ -57,7 +59,7 @@ class SubscriptionService {
         _isPremium = true;
         _completePurchase(purchase);
       } else if (purchase.status == PurchaseStatus.error) {
-        print('Purchase error: ${purchase.error}');
+        _logger.severe('Purchase error: ${purchase.error}');
       }
 
       if (purchase.pendingCompletePurchase) {
