@@ -14,11 +14,8 @@ Thumbs.db
 *.iml
 *.ipr
 *.iws
-.vscode/*
-!.vscode/extensions.json
-!.vscode/settings.json
-!.vscode/launch.json
-!.vscode/tasks.json
+.vscode/
+
 
 # Misc temp/cache
 *.swp
@@ -158,3 +155,6 @@ build/**/outputs/
 # IntelliJ caches
 .gradle/
 **/.DS_Store
+
+# vscode settings
+.vscode/
