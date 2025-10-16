@@ -25,9 +25,13 @@ class ChatProvider with ChangeNotifier {
   String? _errorMessage;
 
   // Pagination support
-  final int _messageLimit = 50;
+  int _messageLimit = 50;
   bool _hasMore = true;
   DocumentSnapshot? _lastDocument;
+
+  // Settings
+  bool _isTTSEnabled = true;
+  double _speechRate = 0.5;
 
   List<MessageModel> get messages => _messages;
   List<ChatSessionModel> get sessions => _sessions;
@@ -38,9 +42,38 @@ class ChatProvider with ChangeNotifier {
   bool get hasMore => _hasMore;
 
   // Initialize chat provider
-  Future<void> initialize(String userId) async {
-    await _voiceService.initialize();
+  Future<void> initialize(
+    String userId, {
+    double? speechRate,
+    int? maxMessages,
+  }) async {
+    if (speechRate != null) {
+      _speechRate = speechRate;
+    }
+    if (maxMessages != null) {
+      _messageLimit = maxMessages;
+    }
+    await _voiceService.initialize(speechRate: _speechRate);
     await loadChatSessions(userId);
+  }
+
+  // Update settings
+  void updateSettings({
+    bool? ttsEnabled,
+    double? speechRate,
+    int? maxMessages,
+  }) {
+    if (ttsEnabled != null) {
+      _isTTSEnabled = ttsEnabled;
+    }
+    if (speechRate != null) {
+      _speechRate = speechRate;
+      _voiceService.updateSpeechRate(speechRate);
+    }
+    if (maxMessages != null) {
+      _messageLimit = maxMessages;
+    }
+    notifyListeners();
   }
 
   // Load chat sessions
@@ -250,7 +283,9 @@ class ChatProvider with ChangeNotifier {
 
   // Speak message
   Future<void> speakMessage(String text) async {
-    await _voiceService.speak(text);
+    if (_isTTSEnabled) {
+      await _voiceService.speak(text);
+    }
   }
 
   // Delete chat session
@@ -266,6 +301,30 @@ class ChatProvider with ChangeNotifier {
     } catch (e) {
       _errorMessage = e.toString();
       notifyListeners();
+    }
+  }
+
+  // Clear all chat history
+  Future<void> clearAllChatHistory(String userId) async {
+    _setLoading(true);
+    try {
+      // Delete all sessions
+      for (var session in _sessions) {
+        await _firestoreService.deleteChatSession(userId, session.id);
+      }
+
+      // Clear local state
+      _sessions = [];
+      _messages = [];
+      _currentSessionId = null;
+
+      notifyListeners();
+    } catch (e) {
+      _errorMessage = 'Failed to clear chat history: $e';
+      await _analytics.recordError(e, StackTrace.current);
+      notifyListeners();
+    } finally {
+      _setLoading(false);
     }
   }
 

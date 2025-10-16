@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'version_config.dart';
 
 class AppConstants {
@@ -27,4 +28,12 @@ class AppConstants {
   // Timeouts
   static const Duration aiResponseTimeout = Duration(seconds: 30);
   static const Duration voiceListenTimeout = Duration(seconds: 30);
+
+  // Default Settings Values
+  static const ThemeMode defaultThemeMode = ThemeMode.system;
+  static const bool defaultTTSEnabled = true;
+  static const double defaultSpeechRate = 0.5;
+  static const double minSpeechRate = 0.3;
+  static const double maxSpeechRate = 1.0;
+  static const int defaultMaxMessages = 50;
 }

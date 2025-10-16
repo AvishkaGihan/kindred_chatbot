@@ -7,6 +7,7 @@ import '../../widgets/loading_widget.dart';
 import '../../widgets/optimized_image.dart';
 import '../auth/login_screen.dart';
 import '../premium_screen.dart';
+import '../settings/settings_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -86,8 +87,10 @@ class ProfileScreen extends StatelessWidget {
                     'Settings',
                     Icons.settings_outlined,
                     () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Settings coming soon!')),
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const SettingsScreen(),
+                        ),
                       );
                     },
                   ),

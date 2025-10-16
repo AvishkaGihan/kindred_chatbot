@@ -7,11 +7,12 @@ class VoiceService {
   final stt.SpeechToText _speech = stt.SpeechToText();
   final FlutterTts _tts = FlutterTts();
   bool _isInitialized = false;
+  double _currentSpeechRate = AppConstants.defaultSpeechRate;
 
   final Logger _logger = Logger('VoiceService');
 
   // Initialize services
-  Future<void> initialize() async {
+  Future<void> initialize({double? speechRate}) async {
     if (_isInitialized) return;
 
     try {
@@ -21,13 +22,21 @@ class VoiceService {
             _logger.info('Speech recognition status: $status'),
       );
 
+      _currentSpeechRate = speechRate ?? AppConstants.defaultSpeechRate;
       await _tts.setLanguage('en-US');
-      await _tts.setSpeechRate(AppConstants.speechRate);
+      await _tts.setSpeechRate(_currentSpeechRate);
       await _tts.setVolume(AppConstants.speechVolume);
       await _tts.setPitch(AppConstants.speechPitch);
     } catch (e) {
       _logger.severe('Voice service initialization error: $e');
     }
+  }
+
+  // Update speech rate
+  Future<void> updateSpeechRate(double rate) async {
+    _currentSpeechRate = rate;
+    await _tts.setSpeechRate(rate);
+    _logger.info('Speech rate updated: $rate');
   }
 
   // Start listening

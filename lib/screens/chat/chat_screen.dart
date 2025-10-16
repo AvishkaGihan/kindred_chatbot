@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/chat_provider.dart';
+import '../../providers/settings_provider.dart';
 import '../../widgets/typing_indicator.dart';
 import '../profile/profile_screen.dart';
 import '../premium_screen.dart';
@@ -31,9 +32,24 @@ class _ChatScreenState extends State<ChatScreen> {
   void _initializeChat() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final chatProvider = Provider.of<ChatProvider>(context, listen: false);
+    final settingsProvider = Provider.of<SettingsProvider>(
+      context,
+      listen: false,
+    );
 
     if (authProvider.user != null) {
-      await chatProvider.initialize(authProvider.user!.uid);
+      await chatProvider.initialize(
+        authProvider.user!.uid,
+        speechRate: settingsProvider.speechRate,
+        maxMessages: settingsProvider.maxMessages,
+      );
+
+      // Update chat provider when settings change
+      chatProvider.updateSettings(
+        ttsEnabled: settingsProvider.isTTSEnabled,
+        speechRate: settingsProvider.speechRate,
+        maxMessages: settingsProvider.maxMessages,
+      );
 
       if (chatProvider.currentSessionId == null) {
         await chatProvider.createNewSession(authProvider.user!.uid);
