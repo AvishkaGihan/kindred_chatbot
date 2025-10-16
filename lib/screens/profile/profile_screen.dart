@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/chat_provider.dart';
 import '../../widgets/loading_widget.dart';
+import '../../widgets/optimized_image.dart';
 import '../auth/login_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -22,23 +23,27 @@ class ProfileScreen extends StatelessWidget {
               padding: const EdgeInsets.all(24),
               child: Column(
                 children: [
-                  CircleAvatar(
-                    radius: 60,
-                    backgroundColor: Theme.of(context).primaryColor,
-                    backgroundImage: user.photoURL != null
-                        ? NetworkImage(user.photoURL!)
-                        : null,
-                    child: user.photoURL == null
-                        ? Text(
+                  user.photoURL != null
+                      ? ClipOval(
+                          child: OptimizedImage(
+                            imageUrl: user.photoURL!,
+                            width: 120,
+                            height: 120,
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                      : CircleAvatar(
+                          radius: 60,
+                          backgroundColor: Theme.of(context).primaryColor,
+                          child: Text(
                             user.displayName?.substring(0, 1).toUpperCase() ??
                                 'U',
                             style: const TextStyle(
                               fontSize: 40,
                               color: Colors.white,
                             ),
-                          )
-                        : null,
-                  ),
+                          ),
+                        ),
                   const SizedBox(height: 20),
                   Text(
                     user.displayName ?? 'User',
