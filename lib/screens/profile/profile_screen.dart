@@ -12,6 +12,9 @@ import '../settings/settings_screen.dart';
 import '../../utils/theme/app_colors.dart';
 import '../../utils/theme/app_dimensions.dart';
 import '../../widgets/snackbar/custom_snackbar.dart';
+import '../../utils/animations/hero_tags.dart';
+import '../../utils/animations/page_transitions.dart';
+import '../../widgets/premium/premium_widgets.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -78,9 +81,13 @@ class ProfileScreen extends StatelessWidget {
                               const SizedBox(height: 60),
 
                               // Profile picture with premium badge
-                              Stack(
-                                children: [
-                                  Container(
+                              Hero(
+                                tag: HeroTags.profilePicture,
+                                child: PremiumBadgeOverlay(
+                                  isPremium:
+                                      false, // TODO: Get from SubscriptionService
+                                  badgeSize: 24,
+                                  child: Container(
                                     padding: const EdgeInsets.all(4),
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
@@ -123,28 +130,7 @@ class ProfileScreen extends StatelessWidget {
                                             ),
                                           ),
                                   ),
-                                  // Premium badge (if applicable)
-                                  // Positioned(
-                                  //   bottom: 0,
-                                  //   right: 0,
-                                  //   child: Container(
-                                  //     padding: const EdgeInsets.all(6),
-                                  //     decoration: BoxDecoration(
-                                  //       color: const Color(0xFFFFC107),
-                                  //       shape: BoxShape.circle,
-                                  //       border: Border.all(
-                                  //         color: Colors.white,
-                                  //         width: 2,
-                                  //       ),
-                                  //     ),
-                                  //     child: const Icon(
-                                  //       Icons.workspace_premium,
-                                  //       color: Colors.white,
-                                  //       size: 16,
-                                  //     ),
-                                  //   ),
-                                  // ),
-                                ],
+                                ),
                               ),
                               const SizedBox(height: AppDimensions.spacingMd),
 
@@ -257,9 +243,8 @@ class ProfileScreen extends StatelessWidget {
                               Icons.settings_rounded,
                               () {
                                 Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const SettingsScreen(),
+                                  PageTransitions.slideFromRight(
+                                    const SettingsScreen(),
                                   ),
                                 );
                               },
@@ -481,7 +466,7 @@ class ProfileScreen extends StatelessWidget {
       onTap: () {
         Navigator.of(
           context,
-        ).push(MaterialPageRoute(builder: (context) => const PremiumScreen()));
+        ).push(PageTransitions.scale(const PremiumScreen()));
       },
       borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
       child: Container(
