@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/chat_provider.dart';
-import '../../widgets/loading_widget.dart';
+import '../../widgets/typing_indicator.dart';
 import '../profile/profile_screen.dart';
 import 'widgets/message_bubble.dart';
 import 'widgets/chat_input.dart';
@@ -161,11 +161,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                 ),
         ),
-        if (chatProvider.isLoading)
-          const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: LoadingWidget(message: 'AI is thinking...'),
-          ),
+        if (chatProvider.isLoading) const TypingIndicator(),
         ChatInput(
           onSendMessage: (message) async {
             if (authProvider.user != null) {
