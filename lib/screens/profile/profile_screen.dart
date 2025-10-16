@@ -5,6 +5,7 @@ import '../../providers/chat_provider.dart';
 import '../../widgets/loading_widget.dart';
 import '../../widgets/optimized_image.dart';
 import '../auth/login_screen.dart';
+import '../premium_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -76,6 +77,8 @@ class ProfileScreen extends StatelessWidget {
                   _buildMenuTile(context, 'Chat History', Icons.history, () {
                     _showChatHistory(context, chatProvider, user.uid);
                   }),
+                  const Divider(),
+                  _buildPremiumTile(context),
                   const Divider(),
                   _buildMenuTile(
                     context,
@@ -173,6 +176,41 @@ class ProfileScreen extends StatelessWidget {
       title: Text(title),
       trailing: const Icon(Icons.chevron_right),
       onTap: onTap,
+    );
+  }
+
+  Widget _buildPremiumTile(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.amber.shade400, Colors.orange.shade600],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: ListTile(
+        leading: const Icon(
+          Icons.workspace_premium,
+          color: Colors.white,
+          size: 28,
+        ),
+        title: const Text(
+          'Upgrade to Premium',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        subtitle: const Text(
+          'Unlock unlimited features',
+          style: TextStyle(color: Colors.white70),
+        ),
+        trailing: const Icon(Icons.chevron_right, color: Colors.white),
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => const PremiumScreen()),
+          );
+        },
+      ),
     );
   }
 

@@ -6,6 +6,7 @@ import '../../providers/auth_provider.dart';
 import '../../providers/chat_provider.dart';
 import '../../widgets/typing_indicator.dart';
 import '../profile/profile_screen.dart';
+import '../premium_screen.dart';
 import 'widgets/message_bubble.dart';
 import 'widgets/chat_input.dart';
 
@@ -72,14 +73,35 @@ class _ChatScreenState extends State<ChatScreen> {
       return CupertinoPageScaffold(
         navigationBar: CupertinoNavigationBar(
           middle: const Text('Kindred'),
-          trailing: CupertinoButton(
-            padding: EdgeInsets.zero,
-            child: const Icon(CupertinoIcons.person_circle),
-            onPressed: () {
-              Navigator.of(context).push(
-                CupertinoPageRoute(builder: (context) => const ProfileScreen()),
-              );
-            },
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CupertinoButton(
+                padding: EdgeInsets.zero,
+                child: const Icon(
+                  CupertinoIcons.star_fill,
+                  color: CupertinoColors.systemYellow,
+                ),
+                onPressed: () {
+                  Navigator.of(context).push(
+                    CupertinoPageRoute(
+                      builder: (context) => const PremiumScreen(),
+                    ),
+                  );
+                },
+              ),
+              CupertinoButton(
+                padding: EdgeInsets.zero,
+                child: const Icon(CupertinoIcons.person_circle),
+                onPressed: () {
+                  Navigator.of(context).push(
+                    CupertinoPageRoute(
+                      builder: (context) => const ProfileScreen(),
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
         ),
         child: _buildChatBody(authProvider, chatProvider),
@@ -90,6 +112,15 @@ class _ChatScreenState extends State<ChatScreen> {
       appBar: AppBar(
         title: const Text('Kindred'),
         actions: [
+          IconButton(
+            icon: Icon(Icons.workspace_premium, color: Colors.amber.shade600),
+            tooltip: 'Upgrade to Premium',
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const PremiumScreen()),
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () async {
