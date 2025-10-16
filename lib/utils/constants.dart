@@ -1,7 +1,11 @@
+import 'version_config.dart';
+
 class AppConstants {
   // App Info
   static const String appName = 'Kindred';
-  static const String appVersion = '1.0.0';
+  static String get appVersion => VersionConfig.appVersion;
+  static int get buildNumber => VersionConfig.buildNumber;
+  static String get fullVersion => VersionConfig.fullVersion;
 
   // Firebase Collections
   static const String usersCollection = 'users';

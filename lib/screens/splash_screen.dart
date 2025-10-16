@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
+import '../utils/version_config.dart';
 import '../widgets/loading_widget.dart';
 import 'auth/login_screen.dart';
 import 'chat/chat_screen.dart';
@@ -63,6 +64,13 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
             const SizedBox(height: 40),
             const LoadingWidget(),
+            const SizedBox(height: 20),
+            Text(
+              'v${VersionConfig.appVersion}',
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: Colors.grey[400]),
+            ),
           ],
         ),
       ),

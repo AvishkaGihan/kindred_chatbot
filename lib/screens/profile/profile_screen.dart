@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/chat_provider.dart';
+import '../../utils/version_config.dart';
 import '../../widgets/loading_widget.dart';
 import '../../widgets/optimized_image.dart';
 import '../auth/login_screen.dart';
@@ -331,7 +332,7 @@ class ProfileScreen extends StatelessWidget {
     showAboutDialog(
       context: context,
       applicationName: 'Kindred',
-      applicationVersion: '1.0.0',
+      applicationVersion: VersionConfig.fullVersion,
       applicationIcon: const Icon(Icons.chat_bubble_outline, size: 48),
       children: [
         const Text(
@@ -344,6 +345,12 @@ class ProfileScreen extends StatelessWidget {
           '• Voice input/output\n'
           '• Persistent chat history\n'
           '• Offline support',
+        ),
+        const SizedBox(height: 16),
+        Text(
+          'Version: ${VersionConfig.appVersion}\n'
+          'Build: ${VersionConfig.buildNumber}',
+          style: TextStyle(fontSize: 12, color: Colors.grey[600]),
         ),
       ],
     );
