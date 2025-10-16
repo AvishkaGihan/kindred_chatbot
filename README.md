@@ -1,6 +1,6 @@
 # Kindred - AI Chatbot App
 
-An intelligent AI-powered chatbot application built with Flutter and Firebase AI, featuring real-time conversations, voice input/output, and persistent chat history.
+An intelligent AI-powered chatbot application built with Flutter and Firebase, featuring real-time conversations, voice input/output, and persistent chat history. The project integrates Firebase services and a configurable AI backend (see `lib/services/ai_service.dart`).
 
 ## Features
 
@@ -30,29 +30,30 @@ lib/
 
 ### Tech Stack
 
-- **Frontend**: Flutter 3.35+ (Dart 3.9+)
-- **Backend**: Firebase (Auth, Firestore, AI)
+- **Frontend**: Flutter (stable)
+- **Dart SDK**: >= 3.9.2 (see `pubspec.yaml`)
+- **Backend**: Firebase (Auth, Firestore, Analytics) and optional Google/Vertex AI via the `firebase_ai` package
 - **State Management**: Provider
-- **AI Model**: Google Gemini 2.5 Flash
-- **Voice**: speech_to_text, flutter_tts
+- **AI Model**: Gemini family (configurable in `lib/services/ai_service.dart`)
+- **Voice**: `speech_to_text`, `flutter_tts`
 
 ## Getting Started
 
 ### Prerequisites
 
-- Flutter SDK 3.35 or higher
-- Dart 3.9 or higher
-- Firebase CLI
-- Android Studio / Xcode
-- Google Cloud Project with Firebase AI enabled
+- Flutter (stable) and a working Flutter toolchain
+- Dart SDK >= 3.9.2 (enforced in `pubspec.yaml`)
+- Firebase CLI / FlutterFire CLI (optional but recommended for multi-platform configuration)
+- Android Studio / Xcode for platform builds
+- (Optional) Google Cloud project with Vertex AI enabled if you plan to call Vertex models directly
 
 ### Installation
 
 1. **Clone the repository**
 
-```bash
-git clone https://github.com/AvishkaGihan/kindred-chatbot.git
-cd kindred-chatbot
+```powershell
+git clone https://github.com/AvishkaGihan/kindred_chatbot.git
+cd kindred_chatbot
 ```
 
 2. **Install dependencies**
@@ -63,19 +64,23 @@ flutter pub get
 
 3. **Configure Firebase**
 
-```bash
-# Install FlutterFire CLI
+If this is a fresh checkout, configure Firebase for platforms you plan to run on:
+
+- Android: this repo already contains `android/app/google-services.json` (check the file in the repo). For other platforms run `flutterfire configure` or provide your platform config files (`GoogleService-Info.plist` for iOS/macOS).
+
+```powershell
+# Install FlutterFire CLI (if needed)
 dart pub global activate flutterfire_cli
 
-# Configure Firebase
+# Interactive config (optional)
 flutterfire configure
 ```
 
-4. **Enable Firebase Services**
+4. **Enable Firebase / Google Cloud Services**
 
-   - Firebase Authentication (Email/Password, Google)
-   - Cloud Firestore
-   - Firebase AI
+- Firebase Authentication (Email/Password, Google)
+- Cloud Firestore
+- (Optional) Vertex AI / Google Cloud AI if you plan to use Vertex models directly. See `docs/API_INTEGRATION.md` for Vertex AI setup and service account guidance.
 
 5. **Update Firestore Security Rules**
 
@@ -127,37 +132,19 @@ flutter build ios --release
 # Then use Xcode to archive and upload to TestFlight
 ```
 
-## Configuration
+### Configuration
 
-### Firebase AI Setup
-
-1. Go to [Firebase Console](https://console.firebase.google.com/)
-2. Enable Firebase AI in your project
-3. The app uses `gemini-2.5-flash` model by default
-
-### Customizing AI Responses
-
-Edit `lib/services/ai_service.dart`:
-
-```dart
-final ai = FirebaseAI.googleAI();
-_model = ai.generativeModel(
-  model: 'gemini-2.5-flash',
-  generationConfig: GenerationConfig(
-    temperature: 0.7,  // Adjust creativity (0.0 - 1.0)
-    maxOutputTokens: 1000,  // Adjust response length
-  ),
-);
-```
+See `docs/API_INTEGRATION.md` for in-depth configuration of Vertex AI and Firebase AI. The AI model and generation settings are configurable in `lib/services/ai_service.dart` — edit that file to change model name and generation parameters (temperature, token limits, etc.).
 
 ## Project Structure
 
 ```
 kindred_chatbot/
-├── android/              # Android native code
+├── android/              # Android native code (contains google-services.json)
 ├── ios/                  # iOS native code
 ├── lib/
 │   ├── main.dart        # App entry point
+│   ├── firebase_options.dart # Generated Firebase config (present in repo)
 │   ├── models/          # Data models
 │   ├── providers/       # State management
 │   ├── screens/         # UI screens
@@ -198,8 +185,8 @@ kindred_chatbot/
 
 **1. Firebase Configuration Error**
 
-```bash
-# Reconfigure Firebase
+```powershell
+# Reconfigure Firebase (force)
 flutterfire configure --force
 ```
 
@@ -258,10 +245,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 Avishka Gihan
 
-Project Link: [https://github.com/AvishkaGihan/kindred-chatbot](https://github.com/AvishkaGihan/kindred-chatbot)
-
-## Demo
-
-📹 **Demo Video**: Coming soon
-
-🌐 **Try TestFlight Beta**: Coming soon
+Project Link: https://github.com/AvishkaGihan/kindred_chatbot
