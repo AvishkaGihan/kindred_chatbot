@@ -6,6 +6,7 @@ import '../../../utils/theme/app_colors.dart';
 import '../../../utils/theme/app_dimensions.dart';
 import '../../../utils/theme/app_animations.dart';
 import '../../../widgets/snackbar/custom_snackbar.dart';
+import '../../../widgets/messages/message_content.dart';
 
 class MessageBubble extends StatefulWidget {
   final MessageModel message;
@@ -220,19 +221,11 @@ class _MessageBubbleState extends State<MessageBubble>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SelectableText(
-                          widget.message.content,
-                          style: Theme.of(context).textTheme.bodyMedium
-                              ?.copyWith(
-                                color: isUser
-                                    ? Colors.white
-                                    : isError
-                                    ? AppColors.errorDark
-                                    : isDark
-                                    ? AppColors.textPrimaryDark
-                                    : AppColors.textPrimaryLight,
-                                height: 1.5,
-                              ),
+                        MessageContent(
+                          content: widget.message.content,
+                          isUser: isUser,
+                          isError: isError,
+                          isDark: isDark,
                         ),
                         const SizedBox(height: AppDimensions.spacing2xs),
                         Row(
