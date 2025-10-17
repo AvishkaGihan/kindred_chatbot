@@ -80,6 +80,9 @@ class _PremiumScreenState extends State<PremiumScreen>
               child: SlideTransition(
                 position: _slideAnimation,
                 child: SingleChildScrollView(
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).padding.bottom + 16,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -113,37 +116,37 @@ class _PremiumScreenState extends State<PremiumScreen>
       ),
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(AppDimensions.paddingLg),
+          padding: const EdgeInsets.all(16),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: const EdgeInsets.all(AppDimensions.paddingLg),
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.2),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
                   Icons.workspace_premium,
-                  size: 80,
+                  size: 60,
                   color: Colors.white,
                 ),
               ),
-              const SizedBox(height: AppDimensions.spacingLg),
+              const SizedBox(height: 16),
               const Text(
                 'Kindred Premium',
                 style: TextStyle(
-                  fontSize: 36,
+                  fontSize: 28,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: AppDimensions.spacingSm),
+              const SizedBox(height: 8),
               Text(
                 'Unlock unlimited conversations and exclusive features',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 14,
                   color: Colors.white.withValues(alpha: 0.95),
                 ),
                 textAlign: TextAlign.center,
@@ -196,7 +199,7 @@ class _PremiumScreenState extends State<PremiumScreen>
     ];
 
     return Padding(
-      padding: const EdgeInsets.all(AppDimensions.paddingLg),
+      padding: const EdgeInsets.all(AppDimensions.paddingMd),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -206,21 +209,22 @@ class _PremiumScreenState extends State<PremiumScreen>
               context,
             ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: AppDimensions.spacingMd),
+          const SizedBox(height: AppDimensions.spacingXs),
           GridView.builder(
+            padding: EdgeInsets.zero,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              crossAxisSpacing: AppDimensions.spacingMd,
-              mainAxisSpacing: AppDimensions.spacingMd,
+              crossAxisSpacing: AppDimensions.spacingSm,
+              mainAxisSpacing: AppDimensions.spacingSm,
               childAspectRatio: 1.0,
             ),
             itemCount: features.length,
             itemBuilder: (context, index) {
               final feature = features[index];
               return Container(
-                padding: const EdgeInsets.all(AppDimensions.paddingMd),
+                padding: const EdgeInsets.all(AppDimensions.paddingSm),
                 decoration: BoxDecoration(
                   color: isDark
                       ? AppColors.surfaceVariantDark
@@ -240,10 +244,11 @@ class _PremiumScreenState extends State<PremiumScreen>
                   ],
                 ),
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(AppDimensions.paddingSm),
+                      padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         color: (feature['color'] as Color).withValues(
                           alpha: 0.1,
@@ -255,18 +260,21 @@ class _PremiumScreenState extends State<PremiumScreen>
                       child: Icon(
                         feature['icon'] as IconData,
                         color: feature['color'] as Color,
-                        size: AppDimensions.iconLg,
+                        size: 28,
                       ),
                     ),
-                    const SizedBox(height: AppDimensions.spacingSm),
+                    const SizedBox(height: 8),
                     Text(
                       feature['title'] as String,
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.bold,
+                        fontSize: 12,
                       ),
                       textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: AppDimensions.spacing2xs),
+                    const SizedBox(height: 2),
                     Text(
                       feature['description'] as String,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -275,6 +283,8 @@ class _PremiumScreenState extends State<PremiumScreen>
                             : AppColors.textSecondaryLight,
                       ),
                       textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
