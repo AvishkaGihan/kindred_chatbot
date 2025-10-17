@@ -83,8 +83,8 @@ class AccessibilityUtils {
 
   /// Get scaled text size based on user's text scale factor
   static double getScaledTextSize(BuildContext context, double baseSize) {
-    final textScaleFactor = MediaQuery.of(context).textScaleFactor;
-    return baseSize * textScaleFactor;
+    final textScaler = MediaQuery.of(context).textScaler;
+    return textScaler.scale(baseSize);
   }
 
   /// Check if high contrast mode is enabled
@@ -212,7 +212,7 @@ class AccessibilityUtils {
 extension AccessibilityContextExtension on BuildContext {
   bool get reduceMotion => MediaQuery.of(this).disableAnimations;
   bool get highContrast => MediaQuery.of(this).highContrast;
-  double get textScaleFactor => MediaQuery.of(this).textScaleFactor;
+  TextScaler get textScaler => MediaQuery.of(this).textScaler;
   bool get boldText => MediaQuery.of(this).boldText;
 
   void announce(String message) {

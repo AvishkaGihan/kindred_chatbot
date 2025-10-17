@@ -144,7 +144,7 @@ class AnimatedResultDialog {
                 margin: const EdgeInsets.all(AppDimensions.marginLg),
                 padding: const EdgeInsets.all(AppDimensions.paddingXl),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).dialogBackgroundColor,
+                  color: Theme.of(context).dialogTheme.backgroundColor,
                   borderRadius: BorderRadius.circular(AppDimensions.radiusLg),
                   boxShadow: [
                     BoxShadow(

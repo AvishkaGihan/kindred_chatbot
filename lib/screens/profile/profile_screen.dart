@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/chat_provider.dart';
+import '../../providers/subscription_provider.dart';
 import '../../utils/version_config.dart';
 import '../../widgets/loading_widget.dart';
 import '../../widgets/optimized_image.dart';
@@ -36,6 +37,7 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
     final chatProvider = Provider.of<ChatProvider>(context);
+    final subscriptionProvider = Provider.of<SubscriptionProvider>(context);
     final user = authProvider.user;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -84,8 +86,7 @@ class ProfileScreen extends StatelessWidget {
                               Hero(
                                 tag: HeroTags.profilePicture,
                                 child: PremiumBadgeOverlay(
-                                  isPremium:
-                                      false, // TODO: Get from SubscriptionService
+                                  isPremium: subscriptionProvider.isPremium,
                                   badgeSize: 24,
                                   child: Container(
                                     padding: const EdgeInsets.all(4),

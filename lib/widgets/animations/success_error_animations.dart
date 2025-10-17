@@ -431,7 +431,7 @@ class _ConfettiPainter extends CustomPainter {
 
       if (y < size.height) {
         final paint = Paint()
-          ..color = particle.color.withOpacity(1.0 - progress);
+          ..color = particle.color.withValues(alpha: 1.0 - progress);
 
         canvas.save();
         canvas.translate(x, y);

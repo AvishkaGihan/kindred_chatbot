@@ -111,7 +111,7 @@ class PerformanceMonitor {
 
       // Log janky frames in debug mode
       if (kDebugMode && info.isJanky) {
-        print(
+        debugPrint(
           '🐌 Janky frame detected: ${info.totalDuration}ms (build: ${info.buildDuration}ms, raster: ${info.rasterDuration}ms)',
         );
       }
@@ -149,11 +149,15 @@ class PerformanceMonitor {
     if (!kDebugMode) return;
 
     final stats = getFrameStats();
-    print('📊 Performance Summary:');
-    print('   FPS: ${stats.fps.toStringAsFixed(1)}');
-    print('   Avg Frame Time: ${stats.avgTotalDuration.toStringAsFixed(1)}ms');
-    print('   Max Frame Time: ${stats.maxTotalDuration}ms');
-    print('   Janky Frames: ${stats.jankyFramePercentage.toStringAsFixed(1)}%');
+    debugPrint('📊 Performance Summary:');
+    debugPrint('   FPS: ${stats.fps.toStringAsFixed(1)}');
+    debugPrint(
+      '   Avg Frame Time: ${stats.avgTotalDuration.toStringAsFixed(1)}ms',
+    );
+    debugPrint('   Max Frame Time: ${stats.maxTotalDuration}ms');
+    debugPrint(
+      '   Janky Frames: ${stats.jankyFramePercentage.toStringAsFixed(1)}%',
+    );
   }
 
   /// Clear all timers and statistics
@@ -218,14 +222,28 @@ class MemoryMonitor {
 
     // Note: Detailed memory monitoring requires platform channels
     // This is a placeholder for memory monitoring
-    print('💾 Memory checkpoint: $label');
+    debugPrint('💾 Memory checkpoint: $label');
   }
 
   /// Check if app is running on a low-memory device
   static bool isLowMemoryDevice() {
-    // This is a simplified check
-    // In production, you'd use platform channels to get actual RAM
-    return false; // TODO: Implement platform-specific memory check
+    // Basic heuristic: assume devices with smaller screens might be lower memory
+    // In a real implementation, use device_info_plus package for accurate detection
+    try {
+      final mediaQuery = WidgetsBinding.instance.platformDispatcher.views.first;
+      final devicePixelRatio = mediaQuery.devicePixelRatio;
+      final physicalSize = mediaQuery.physicalSize;
+
+      // Rough estimate: if screen area is small, might be lower memory device
+      final screenArea =
+          physicalSize.width *
+          physicalSize.height /
+          (devicePixelRatio * devicePixelRatio);
+      return screenArea < 1000000; // Less than ~1M logical pixels
+    } catch (e) {
+      // Fallback: assume not low memory if we can't determine
+      return false;
+    }
   }
 }
 

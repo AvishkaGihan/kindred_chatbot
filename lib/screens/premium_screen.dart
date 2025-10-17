@@ -692,7 +692,7 @@ class _PremiumScreenState extends State<PremiumScreen>
             child: ElevatedButton(
               onPressed: () async {
                 await _subscriptionService.buyProduct(product);
-                if (context.mounted) {
+                if (mounted) {
                   CustomSnackbar.showSuccess(
                     context,
                     message: 'Processing your subscription...',
@@ -822,7 +822,7 @@ class _PremiumScreenState extends State<PremiumScreen>
           TextButton.icon(
             onPressed: () async {
               await _subscriptionService.restorePurchases();
-              if (context.mounted) {
+              if (mounted) {
                 CustomSnackbar.showInfo(
                   context,
                   message: 'Restoring purchases...',

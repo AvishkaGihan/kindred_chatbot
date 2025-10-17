@@ -7,14 +7,22 @@ import 'firebase_options.dart';
 import 'providers/auth_provider.dart';
 import 'providers/chat_provider.dart';
 import 'providers/settings_provider.dart';
+import 'providers/subscription_provider.dart';
 import 'screens/splash_screen.dart';
 import 'utils/constants.dart';
 import 'utils/theme/app_theme.dart';
+import 'utils/performance/performance_monitor.dart';
 
 void main() async {
+  // Start measuring app initialization time
+  PerformanceMonitor().startTimer('appInit');
+
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // Stop app init timer
+  PerformanceMonitor().stopTimer('appInit');
 
   // Pass all uncaught errors to Crashlytics
   FlutterError.onError = (errorDetails) {
@@ -26,6 +34,11 @@ void main() async {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
     return true;
   };
+
+  // Start frame performance monitoring in debug mode
+  if (kDebugMode) {
+    PerformanceMonitor().startFrameMonitoring();
+  }
 
   runApp(const MyApp());
 }
@@ -45,6 +58,9 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (_) => SettingsProvider()..initialize()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => ChatProvider()),
+        ChangeNotifierProvider(
+          create: (_) => SubscriptionProvider()..initialize(),
+        ),
       ],
       child: Consumer<SettingsProvider>(
         builder: (context, settings, _) => MaterialApp(

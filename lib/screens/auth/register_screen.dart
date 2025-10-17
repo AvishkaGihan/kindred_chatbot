@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../providers/auth_provider.dart';
 import '../../utils/helpers.dart';
 import '../../utils/theme/app_colors.dart';
@@ -290,9 +291,10 @@ class _RegisterScreenState extends State<RegisterScreen>
                                   style: Theme.of(context).textTheme.bodySmall,
                                 ),
                                 GestureDetector(
-                                  onTap: () {
-                                    // TODO: Open terms of service
-                                  },
+                                  onTap: () => _launchURL(
+                                    context,
+                                    'https://github.com/AvishkaGihan/kindred_chatbot/blob/main/TERMS_OF_SERVICE.md',
+                                  ),
                                   child: Text(
                                     'Terms & Conditions',
                                     style: Theme.of(context).textTheme.bodySmall
@@ -310,9 +312,10 @@ class _RegisterScreenState extends State<RegisterScreen>
                                   style: Theme.of(context).textTheme.bodySmall,
                                 ),
                                 GestureDetector(
-                                  onTap: () {
-                                    // TODO: Open privacy policy
-                                  },
+                                  onTap: () => _launchURL(
+                                    context,
+                                    'https://github.com/AvishkaGihan/kindred_chatbot/blob/main/PRIVACY_POLICY.md',
+                                  ),
                                   child: Text(
                                     'Privacy Policy',
                                     style: Theme.of(context).textTheme.bodySmall
@@ -378,5 +381,18 @@ class _RegisterScreenState extends State<RegisterScreen>
         ),
       ),
     );
+  }
+
+  Future<void> _launchURL(BuildContext context, String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Could not open $url')));
+      }
+    }
   }
 }
